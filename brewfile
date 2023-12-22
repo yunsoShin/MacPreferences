@@ -47,6 +47,8 @@ brew 'mysql'
 brew 'mysql-client'
 # 빠른, 디스크 공간 효율적인 패키지 매니저입니다.
 brew 'pnpm'
+
+brew 'yarn'
 # Vercel 플랫폼과 상호 작용하는 명령줄 도구입니다.
 brew 'vercel-cli'
 # 빠른 검색 도구입니다.
