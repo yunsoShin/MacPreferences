@@ -1,0 +1,117 @@
+# Homebrew Cask 저장소를 추가합니다. GUI 애플리케이션을 설치하는 데 사용됩니다.
+tap 'homebrew/cask'
+# 글꼴 설치를 위한 Homebrew Cask Fonts 저장소를 추가합니다.
+tap 'homebrew/cask-fonts'
+# Pulumi 클라우드 인프라 관리 도구의 저장소를 추가합니다.
+tap 'pulumi/tap'
+
+# Redpanda를 설치합니다. Kafka 호환 스트리밍 데이터 플랫폼입니다.
+brew 'redpanda-data/tap/redpanda'
+# Supabase를 설치합니다. PostgreSQL 기반의 오픈 소스 Firebase 대안입니다.
+brew 'supabase/tap/supabase'
+# Cloudflare의 명령줄 도구인 Cloudflared를 설치합니다.
+brew 'cloudflare/cloudflare/cloudflared'
+# 로그를 위한 명령줄 인터페이스 도구입니다.
+brew 'logcli'
+# 사용하기 쉬운 HTTP 클라이언트 명령줄 도구입니다.
+brew 'httpie'
+# Kubernetes를 위한 선언적인 GitOps CD 도구입니다.
+brew 'argocd'
+# Vim 텍스트 에디터의 확장 버전입니다.
+brew 'neovim'
+# Kubernetes IN Docker - 로컬 Kubernetes 클러스터를 Docker 컨테이너로 실행합니다.
+brew 'kind'
+# Kubernetes 매니페스트의 구성 관리 도구입니다.
+brew 'kustomize'
+# Kubernetes 패키지 매니저입니다.
+brew 'helm'
+# Amazon EKS 클러스터를 생성, 관리하는 명령줄 도구입니다.
+brew 'eksctl'
+# 디렉토리와 파일을 트리 구조로 보여주는 도구입니다.
+brew 'tree'
+# Python 프로그래밍 언어입니다.
+brew 'python'
+# 분산 시스템을 위한 키-값 저장소입니다.
+brew 'etcd'
+# JavaScript를 서버 측에서 실행하는 플랫폼입니다.
+brew 'node'
+# 명령줄 도구 사용법을 간단히 보여주는 도구입니다.
+brew 'tldr'
+# 'ls' 명령어의 현대적인 대안입니다.
+brew 'exa'
+# HTTP 성능 테스트 도구입니다.
+brew 'oha'
+# MySQL 데이터베이스 서버입니다.
+brew 'mysql'
+# MySQL 서버에 접속할 수 있는 클라이언트 도구입니다.
+brew 'mysql-client'
+# 빠른, 디스크 공간 효율적인 패키지 매니저입니다.
+brew 'pnpm'
+# Vercel 플랫폼과 상호 작용하는 명령줄 도구입니다.
+brew 'vercel-cli'
+# 빠른 검색 도구입니다.
+brew 'ripgrep'
+# 간단하고 사용하기 쉬운 파일 검색 도구입니다.
+brew 'fd'
+# 'dig' 명령어의 현대적인 대안입니다.
+brew 'dog'
+# Go 프로그래밍 언어입니다.
+brew 'go'
+# 스트림 편집을 위한 GNU 버전 도구입니다.
+brew 'gnu-sed'
+# 여러 버전의 언어를 관리할 수 있는 도구입니다.
+brew 'asdf'
+# 간단한 텍스트 선택/필터링 도구입니다.
+brew 'choose-rust'
+# 교차 셸 프롬프트입니다.
+brew 'starship'
+# 새로운 타입의 셸입니다.
+brew 'nushell'
+# 커맨드라인에서 사용할 수 있는 퍼지 파인더입니다.
+brew 'fzf'
+# JSON 데이터를 처리하는 명령줄 도구입니다.
+brew 'jq'
+# Zsh 초기화 스크립트 매니저입니다.
+brew 'zinit'
+# 'cat' 명령의 현대적인 대안입니다.
+brew 'bat'
+# YAML 파일을 처리하는 명령줄 도구입니다.
+brew 'yq'
+# Kubernetes 명령줄 도구입니다.
+brew 'kubernetes-cli'
+# Amazon Web Services 명령줄 인터페이스입니다.
+brew 'awscli'
+# 클라우드 인프라를 코드로 관리하는 도구입니다.
+brew 'pulumi'
+# 커밋 메시지 작성을 도와주는 도구입니다.
+brew 'commitizen'
+# Lua 프로그래밍 언어입니다.
+brew 'lua'
+# 셸 환경을 디렉토리별로 관리하는 도구입니다.
+brew 'direnv'
+# Kubernetes CLI To Manage Your Clusters In Style.
+brew 'k9s'
+
+# 간단하고 안전한 VPN입니다.
+cask 'tailscale'
+# 비밀번호 관리 앱입니다.
+cask '1password'
+# macOS를 위한 고급 터미널 에뮬레이터입니다.
+cask 'iterm2'
+# 컨테이너를 만들고 관리하는 플랫폼입니다.
+cask 'docker'
+# 소스 코드 편집기입니다.
+cask 'visual-studio-code'
+# macOS를 위한 창 관리 도구입니다.
+cask 'rectangle'
+# 암호화된 채팅 및 파일 공유 서비스입니다.
+cask 'keybase'
+# 개발자를 위한 글꼴입니다.
+cask 'font-jetbrains-mono-nerd-font'
+
+# Apple의 공식 IDE입니다.
+mas 'Xcode', id: 497799835
+# 팀 커뮤니케이션을 위한 앱입니다.
+mas 'Slack', id: 803453959
+# 인기 있는 메시징 앱입니다.
+mas "kakaoTalk", id: 869223134
