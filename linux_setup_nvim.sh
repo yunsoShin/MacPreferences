@@ -1,5 +1,27 @@
 #!/bin/bash
 
+# Git 설치 여부 확인
+if ! command -v git &> /dev/null
+then
+    echo "Git이 설치되어 있지 않습니다. 설치를 진행합니다..."
+    sudo apt update
+    sudo apt install -y git
+else
+    echo "Git이 이미 설치되어 있습니다."
+    git --version
+fi
+
+# Neovim 설치 여부 확인
+if ! command -v nvim &> /dev/null
+then
+    echo "Neovim이 설치되어 있지 않습니다. 설치를 진행합니다..."
+    sudo apt update
+    sudo apt install -y neovim
+else
+    echo "Neovim이 이미 설치되어 있습니다."
+    nvim --version
+fi
+
 echo "사용자 홈 디렉토리로 이동..."
 cd ~ || { echo "홈 디렉토리로 이동 실패"; exit 1; }
 
@@ -69,8 +91,7 @@ return {
 EOL
 
 # init.lua 파일의 local plugins 객체 갱신
-sed -i '' 's/local plugins = {}/local plugins = "plugins"/' ~/.config/nvim/lua/config/init.lua
-
+sed -i 's/local plugins = {}/local plugins = "plugins"/' ~/.config/nvim/lua/config/init.lua
 
 echo "plugins/NeoTree.lua 파일 생성 및 설정 추가..."
 cat <<EOL > ~/.config/nvim/lua/plugins/neo-tree.lua
@@ -81,15 +102,8 @@ return {
       "nvim-lua/plenary.nvim",
       "nvim-tree/nvim-web-devicons", -- not strictly required, but recommended
       "MunifTanjim/nui.nvim",
-      -- "3rd/image.nvim", -- Optional image support in preview window: See `# Preview Mode` for more information
     }
 }
 EOL
 
-
 echo "스크립트 실행 완료."
-
-
-
-
-
