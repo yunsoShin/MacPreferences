@@ -142,10 +142,14 @@ return {
 EOL
 
 
-sed -i '' 's/local plugins = {}/local plugins = "plugins"/' ~/.config/nvim/lua/config/init.lua
+# 운영체제에 따라 다른 sed 명령어 실행
+if [[ "$OS" == "Linux" ]]; then
+    sed -i 's/local plugins = {}/local plugins = "plugins"/' ~/.config/nvim/lua/config/init.lua || { echo "sed 명령어 실행 실패"; exit 1; }
+elif [[ "$OS" == "Darwin" ]]; then
+    sed -i '' 's/local plugins = {}/local plugins = "plugins"/' ~/.config/nvim/lua/config/init.lua || { echo "sed 명령어 실행 실패"; exit 1; }
+fi
 
-
-
-
+echo "Neovim 상태 점검을 위해 :checkhealth 명령어 실행..."
+nvim -c 'checkhealth' || { echo "Neovim 상태 점검 실패"; exit 1; }
 
 echo "스크립트 실행 완료."
