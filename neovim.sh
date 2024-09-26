@@ -2,17 +2,34 @@
 
 # 운영체제 확인
 OS=$(uname -s)
-
+ARCH=$(uname -m) # 시스템 아키텍처 확인
 
 # Homebrew 설치 여부 확인 (Mac과 Linux 모두에 적용)
 if ! command -v brew &> /dev/null
 then
     echo "Homebrew가 설치되어 있지 않습니다. 설치를 진행합니다..."
-    if [[ "$OS" == "Linux" ]]; then
+    if [[ "$OS" == "Linux" && "$ARCH" != "arm64" ]]; then
         /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
         eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
     elif [[ "$OS" == "Darwin" ]]; then
         /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+    else
+        echo "Homebrew가 이 아키텍처에서는 지원되지 않습니다. apt를 이용해 Neovim을 설치합니다..."
+        # Ubuntu 버전 확인
+        UBUNTU_VERSION=$(lsb_release -r | awk '{print $2}')
+        if [[ $(echo "$UBUNTU_VERSION >= 18.04" | bc -l) -eq 1 ]]; then
+            # 최신 Ubuntu 버전
+            sudo add-apt-repository ppa:neovim-ppa/stable
+            sudo apt-get update
+            sudo apt-get install -y neovim
+        else
+            # 이전 Ubuntu 버전
+            sudo apt-get update
+            sudo apt-get install -y python-dev python-pip python3-dev
+            sudo apt-get install -y python3-setuptools
+            sudo easy_install3 pip
+            sudo apt-get install -y neovim
+        fi
     fi
 else
     echo "Homebrew가 이미 설치되어 있습니다."
@@ -40,7 +57,7 @@ then
     fi
 else
     echo "Neovim이 설치되어 있지 않습니다. 설치를 진행합니다..."
-    if [[ "$OS" == "Linux" ]]; then
+    if [[ "$OS" == "Linux" && "$ARCH" != "arm64" ]]; then
         sudo apt update
         sudo apt install -y neovim
     elif [[ "$OS" == "Darwin" ]]; then
