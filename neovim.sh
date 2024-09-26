@@ -185,4 +185,177 @@ fi
 echo "Neovim 상태 점검을 위해 :checkhealth 명령어 실행..."
 nvim -c 'checkhealth' || { echo "Neovim 상태 점검 실패"; exit 1; }
 
+
+
+
+# globals.lua, keymaps.lua, options.lua 파일 생성
+echo "globals.lua, keymaps.lua, options.lua 파일 생성..."
+touch ~/.config/nvim/lua/config/globals.lua || { echo "globals.lua 파일 생성 실패"; exit 1; }
+touch ~/.config/nvim/lua/config/keymaps.lua || { echo "keymaps.lua 파일 생성 실패"; exit 1; }
+touch ~/.config/nvim/lua/config/options.lua || { echo "options.lua 파일 생성 실패"; exit 1; }
+
+echo "globals.lua, keymaps.lua, options.lua 파일이 생성되었습니다."
+
+# 키매퍼 파일 생성
+echo "keyMapper.lua 파일 생성..."
+touch ~/.config/nvim/lua/utils/keyMapper.lua || { echo "keyMapper.lua 파일 생성 실패"; exit 1; }
+
+echo "keyMapper.lua 파일이 생성되었습니다."
+
+
+
+
+# keyMapper.lua  내용 추가
+echo "keyMapper.lua 파일 작성 중..."
+cat <<EOL > ~/.config/nvim/lua/utils/keyMapper.lua
+local keyMapper = function(from, to, mode, opts)
+    local options = { noremap = true, silent = true }
+    mode = mode or "n"
+    
+    if opts then
+        options = vim.tbl_extend("force", options, opts)
+    end
+
+    vim.keymap.set(mode, from, to, options)
+end
+
+return { mapKey = keyMapper }
+EOL
+
+echo "keyMapper.lua 파일이 작성되었습니다."
+
+
+
+# globals.lua 파일 작성 및 내용 추가
+echo "globals.lua 파일 작성 중..."
+cat <<EOL > ~/.config/nvim/lua/config/globals.lua
+vim.g.mapleader = " "  -- global leader
+vim.g.maplocalleader = " "  -- local leader
+EOL
+
+echo "globals.lua 파일이 작성되었습니다."
+
+
+
+# keymaps.lua 파일 작성 및 내용 추가
+echo "keymaps.lua 파일 작성 중..."
+cat <<EOL > ~/.config/nvim/lua/config/keymaps.lua
+local mapKey = require("utils.keyMapper").mapKey
+
+-- Neotree toggle
+mapKey('<leader>e', ':Neotree toggle<cr>')
+
+-- pane navigation
+mapKey('<C-h>', '<C-w>h')  -- Left
+mapKey('<C-j>', '<C-w>j')  -- Down
+mapKey('<C-k>', '<C-w>k')  -- Up
+mapKey('<C-l>', '<C-w>l')  -- Right
+
+-- clear search hl
+mapKey('<leader>h', ':nohlsearch<CR>')
+EOL
+
+echo "keymaps.lua 파일이 작성되었습니다."
+
+
+
+# options.lua 파일 작성 및 내용 추가
+echo "options.lua 파일 작성 중..."
+cat <<EOL > ~/.config/nvim/lua/config/options.lua
+local opt = vim.opt
+
+-- tab/indent
+opt.tabstop = 2           -- 탭 간격을 2칸으로 설정
+opt.shiftwidth = 2        -- 코드 블록을 들여쓰기 할 때, 2칸 간격 사용
+opt.softtabstop = 2       -- Soft 탭 간격을 2칸으로 설정
+opt.expandtab = true      -- 탭을 스페이스로 변환
+opt.smartindent = true    -- 자동으로 들여쓰기 추가
+opt.wrap = false          -- 줄이 길어지더라도 자동으로 개행하지 않음
+
+-- search
+opt.incsearch = true      -- 검색할 때 입력할 때마다 즉시 결과 표시
+opt.ignorecase = true     -- 대소문자 구분 없이 검색
+opt.smartcase = true      -- 대소문자를 입력하면 구분하여 검색
+
+-- visual
+opt.number = true         -- 줄 번호 표시
+opt.relativenumber = true -- 상대적인 줄 번호 표시
+opt.termguicolors = true  -- 터미널 GUI 색상 활성화
+opt.signcolumn = "yes"    -- 좌측에 시그널 열을 항상 표시
+
+-- etc
+opt.encoding = "UTF-8"    -- 파일 인코딩을 UTF-8로 설정
+opt.cmdheight = 1         -- 명령어 입력창의 높이를 1줄로 설정
+opt.scrolloff = 10        -- 화면의 상하단에서 10줄 이상 남도록 스크롤
+opt.mouse:append("a")     -- 마우스 모든 모드에서 활성화
+EOL
+
+echo "options.lua 파일이 작성되었습니다."
+
+
+
+# init.lua 파일에 필요한 require() 구문 추가
+echo "init.lua 파일에서 lazy.nvim 설정 전에 require() 구문 추가 중..."
+
+# 임시 파일에 init.lua를 작성하되, lazy.nvim 설정 전 require 구문 삽입
+cat <<EOL > ~/.config/nvim/lua/config/init_temp.lua
+local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
+if not (vim.uv or vim.loop).fs_stat(lazypath) then
+  vim.fn.system({
+    "git",
+    "clone",
+    "--filter=blob:none",
+    "https://github.com/folke/lazy.nvim.git",
+    "--branch=stable", -- latest stable release
+    lazypath,
+  })
+end
+vim.opt.rtp:prepend(lazypath)
+
+-- Load additional configurations
+require("config.globals")
+require("config.keymaps")
+require("config.options")
+
+local plugins = "plugins"
+local opts = {}
+
+require("lazy").setup(plugins, opts)
+EOL
+
+# 기존 init.lua를 덮어씌움
+mv ~/.config/nvim/lua/config/init_temp.lua ~/.config/nvim/lua/config/init.lua
+
+echo "init.lua 파일에 require() 구문이 추가되었습니다."
+
+echo "plugins/telescope.lua 파일 생성 및 설정 추가 중..."
+
+# telescope.lua 파일 임시 작성
+cat <<EOL > ~/.config/nvim/lua/plugins/telescope_temp.lua
+local mapKey = require("utils.keyMapper").mapKey
+
+return {
+    'nvim-telescope/telescope.nvim', tag = '0.1.5',
+    dependencies = { 'nvim-lua/plenary.nvim' },
+    config = function()
+        local builtin = require("telescope.builtin")
+        
+        -- 키 매핑 설정
+        mapKey('<leader>ff', builtin.find_files)
+        mapKey('<leader>fg', builtin.live_grep)
+        mapKey('<leader>fb', builtin.buffers)
+        mapKey('<leader>fh', builtin.help_tags)
+    end,
+}
+EOL
+
+# 기존 telescope.lua 파일 덮어씌움
+mv ~/.config/nvim/lua/plugins/telescope_temp.lua ~/.config/nvim/lua/plugins/telescope.lua
+
+echo "plugins/telescope.lua 파일이 덮어씌워졌습니다."
+
+
+
+
+
 echo "스크립트 실행 완료."
