@@ -571,4 +571,327 @@ echo "plugins/telescope.lua 파일이 덮어씌워졌습니다."
 
 
 
+
+# # alpha.lua 파일 
+# echo "alpha.lua 파일 생성 중..."
+# cat <<EOL > ~/.config/nvim/lua/plugins/alpha.lua
+# local function getLen(str, start_pos)
+# 	local byte = string.byte(str, start_pos)
+# 	if not byte then
+# 		return nil
+# 	end
+
+# 	return (byte < 0x80 and 1) or (byte < 0xE0 and 2) or (byte < 0xF0 and 3) or (byte < 0xF8 and 4) or 1
+# end
+
+# local function colorize(header, header_color_map, colors)
+# 	for letter, color in pairs(colors) do
+# 		local color_name = "AlphaJemuelKwelKwelWalangTatay" .. letter
+# 		vim.api.nvim_set_hl(0, color_name, color)
+# 		colors[letter] = color_name
+# 	end
+
+# 	local colorized = {}
+
+# 	for i, line in ipairs(header_color_map) do
+# 		local colorized_line = {}
+# 		local pos = 0
+
+# 		for j = 1, #line do
+# 			local start = pos
+# 			pos = pos + getLen(header[i], start + 1)
+
+# 			local color_name = colors[line:sub(j, j)]
+# 			if color_name then
+# 				table.insert(colorized_line, { color_name, start, pos })
+# 			end
+# 		end
+
+# 		table.insert(colorized, colorized_line)
+# 	end
+
+# 	return colorized
+# end
+
+# local alpha_c = function()
+# 	local alpha = require("alpha")
+
+# 	-- catppuccin 팔레트를 제거하고 기본 색상 사용
+# 	local dashboard = require("alpha.themes.dashboard")
+
+# 	local header = {
+# 		[[ ██████████████████████████████████████████████████████████████████████████████████████████████████████                                   ]],
+# 		[[ ██████████████████████████████████████████████████████████████████████████████████████████████████████ ]],
+# 		[[ ██████████████████████████████████████████████████████████████████████████████████████████████████████ ]],
+# 		[[ ██████████████████████████████████████████████████████████████████████████████████████████████████████ ]],
+# 		[[ ██████████████████████████████████████████████████████████████████████████████████████████████████████ ]],
+# 		[[ ██████████████████████████████████████████████████████████████████████████████████████████████████████ ]],
+# 		[[ ██████████████████████████████████████████████████████████████████████████████████████████████████████ ]],
+# 		[[ ██████████████████████████████████████████████████████████████████████████████████████████████████████ ]],
+# 		[[ ██████████████████████████████████████████████████████████████████████████████████████████████████████ ]],
+# 		[[ ██████████████████████████████████████████████████████████████████████████████████████████████████████ ]],
+# 		[[ ██████████████████████████████████████████████████████████████████████████████████████████████████████ ]],
+# 		[[ ██████████████████████████████████████████████████████████████████████████████████████████████████████ ]],
+# 		[[ ██████████████████████████████████████████████████████████████████████████████████████████████████████ ]],
+# 		[[ ██████████████████████████████████████████████████████████████████████████████████████████████████████ ]],
+# 		[[ ██████████████████████████████████████████████████████████████████████████████████████████████████████ ]],
+# 		[[ ██████████████████████████████████████████████████████████████████████████████████████████████████████ ]],
+# 		[[ ██████████████████████████████████████████████████████████████████████████████████████████████████████ ]],
+# 		[[ ██████████████████████████████████████████████████████████████████████████████████████████████████████ ]],
+# 		[[ ██████████████████████████████████████████████████████████████████████████████████████████████████████ ]],
+# 		[[ ██████████████████████████████████████████████████████████████████████████████████████████████████████ ]],
+# 	}
+
+# 	local color_map = {
+# 		[[ WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBWWWWWWWWWWWWWW ]],
+# 		[[ RRRRWWWWWWWWWWWWWWWWRRRRRRRRRRRRRRRRWWWWWWWWWWWWWWWWBBPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPBBWWWWWWWWWWWW ]],
+# 		[[ RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRBBPPPPPPHHHHHHHHHHHHHHHHHHHHHHHHHHPPPPPPBBWWWWWWWWWW ]],
+# 		[[ RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRBBPPPPHHHHHHHHHHHHFFHHHHFFHHHHHHHHHHPPPPBBWWWWWWWWWW ]],
+# 		[[ OOOORRRRRRRRRRRRRRRROOOOOOOOOOOOOOOORRRRRRRRRRRRRRBBPPHHHHFFHHHHHHHHHHHHHHHHHHHHHHHHHHHHPPBBWWWWWWWWWW ]],
+# 		[[ OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOBBPPHHHHHHHHHHHHHHHHHHBBMMMMBBHHHHHHHHPPBBBBMMMMBBWW ]],
+# 		[[ OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOBBPPHHHHHHHHHHHHHHHHHHBBMMMMMMBBHHHHHHPPBBMMMMMMBBWW ]],
+# 		[[ YYYYOOOOOOOOOOOOOOOOYYYYYYYYYYYYYYYYOOBBBBBBBBOOOOBBPPHHHHHHHHHHHHFFHHHHBBMMMMMMBBHHHHHHPPBBMMMMMMBBWW ]],
+# 		[[ YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYBBMMMMBBBBOOBBPPHHHHHHHHHHHHHHHHHHBBMMMMMMMMBBBBBBBBMMMMMMMMBBWW ]],
+# 		[[ YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYBBBBMMMMBBBBBBPPHHHHHHFFHHHHHHHHHHBBMMMMMMMMMMMMMMMMMMMMMMMMBBWW ]],
+# 		[[ GGGGYYYYYYYYYYYYYYYYGGGGGGGGGGGGGGGGYYYYBBBBMMMMBBBBPPHHHHHHHHHHHHHHFFBBMMMMMMMMMMMMMMMMMMMMMMMMMMMMBB ]],
+# 		[[ GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGBBBBMMMMBBPPHHFFHHHHHHHHHHHHBBMMMMMMCCBBMMMMMMMMMMCCBBMMMMBB ]],
+# 		[[ GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGBBBBBBBBPPHHHHHHHHHHHHHHHHBBMMMMMMBBBBMMMMMMBBMMBBBBMMMMBB ]],
+# 		[[ UUUUGGGGGGGGGGGGGGGGUUUUUUUUUUUUUUUUGGGGGGGGGGGGBBBBPPHHHHHHHHHHFFHHHHBBMMRRRRMMMMMMMMMMMMMMMMMMRRRRBB ]],
+# 		[[ UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUBBPPPPHHFFHHHHHHHHHHBBMMRRRRMMBBMMMMBBMMMMBBMMRRRRBB ]],
+# 		[[ UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUBBPPPPPPHHHHHHHHHHHHHHBBMMMMMMBBBBBBBBBBBBBBMMMMBBWW ]],
+# 		[[ VVVVUUUUUUUUUUUUUUUUVVVVVVVVVVVVVVVVUUUUUUUUUUUUBBBBBBPPPPPPPPPPPPPPPPPPPPBBMMMMMMMMMMMMMMMMMMMMBBWWWW ]],
+# 		[[ VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVBBMMMMMMBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBWWWWWW ]],
+# 		[[ VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVBBMMMMBBBBWWBBMMMMBBWWWWWWWWWWBBMMMMBBWWBBMMMMBBWWWWWWWW ]],
+# 		[[ WWWWVVVVVVVVVVVVVVVVWWWWWWWWWWWWWWWWVVVVVVVVVVBBBBBBBBWWWWBBBBBBWWWWWWWWWWWWWWBBBBBBWWWWBBBBWWWWWWWWWW ]],
+# 	}
+
+# 	local colors = {
+# 		["W"] = { fg = "#ffffff" },
+# 		["B"] = { fg = "#000000" },
+# 		["R"] = { fg = "#ff0000" },
+# 		["O"] = { fg = "#ffa500" },
+# 		["Y"] = { fg = "#ffff00" },
+# 		["G"] = { fg = "#00ff00" },
+# 		["U"] = { fg = "#0000ff" },
+# 		["P"] = { fg = "#ff00ff" },
+# 		["H"] = { fg = "#ff1493" },
+# 		["F"] = { fg = "#ff4500" },
+# 		["M"] = { fg = "#800080" },
+# 		["V"] = { fg = "#ee82ee" },
+# 	}
+
+# 	dashboard.section.header.val = header
+# 	dashboard.section.header.opts = {
+# 		hl = colorize(header, color_map, colors),
+# 		position = "center",
+# 	}
+
+# 	dashboard.section.buttons.val = {
+# 		    dashboard.button( "n", "  > New file" , ":ene <BAR> startinsert <CR>"),
+#             dashboard.button( "f", "  > Find file", ":Telescope find_files<CR>"),
+#             dashboard.button( "w", "  > Find Word", ":Telescope live_grep <CR>"),
+#             dashboard.button( "r", "  > Recent"   , ":Telescope oldfiles<CR>"),
+#             dashboard.button( "q", "  > Quit", ":qa<CR>"),
+# 	}
+# 	for _, a in ipairs(dashboard.section.buttons.val) do
+# 		a.opts.width = 49
+# 		a.opts.cursor = -2
+# 	end
+
+# 	alpha.setup(dashboard.config)
+# end
+
+# return {
+#     'goolord/alpha-nvim',
+#     config = alpha_c
+# }
+# EOL
+
+# echo "alpha.lua 파일이 수정되었습니다."
+
+
+
+
+
+# catppuccin.lua 파일 생성
+echo "catppuccin.lua 파일 생성 중..."
+cat <<EOL > ~/.config/nvim/lua/plugins/catppuccin.lua
+return {
+    "catppuccin/nvim",
+    name = "catppuccin",
+    config = function()
+        vim.cmd.colorscheme "catppuccin"
+    end
+}
+EOL
+
+echo "catppuccin.lua 파일이 생성되었습니다."
+
+
+# lualine.lua 파일 덮어쓰기
+echo "lualine.lua 파일 덮어쓰기 중..."
+cat <<EOL > ~/.config/nvim/lua/plugins/lualine.lua
+return {
+    'nvim-lualine/lualine.nvim',
+    dependencies = { 'nvim-tree/nvim-web-devicons' },
+    config = function()
+        require("lualine").setup({
+            options = {
+                theme = "catppuccin"
+            }
+        })
+    end
+}
+EOL
+
+echo "lualine.lua 파일이 덮어씌워졌습니다."
+
+
+
+
+
+# alpha.lua 파일 수정
+echo "alpha.lua 파일 수정 중..."
+cat <<EOL > ~/.config/nvim/lua/plugins/alpha.lua
+local function getLen(str, start_pos)
+	local byte = string.byte(str, start_pos)
+	if not byte then
+		return nil
+	end
+
+	return (byte < 0x80 and 1) or (byte < 0xE0 and 2) or (byte < 0xF0 and 3) or (byte < 0xF8 and 4) or 1
+end
+
+local function colorize(header, header_color_map, colors)
+	for letter, color in pairs(colors) do
+		local color_name = "AlphaJemuelKwelKwelWalangTatay" .. letter
+		vim.api.nvim_set_hl(0, color_name, color)
+		colors[letter] = color_name
+	end
+
+	local colorized = {}
+
+	for i, line in ipairs(header_color_map) do
+		local colorized_line = {}
+		local pos = 0
+
+		for j = 1, #line do
+			local start = pos
+			pos = pos + getLen(header[i], start + 1)
+
+			local color_name = colors[line:sub(j, j)]
+			if color_name then
+				table.insert(colorized_line, { color_name, start, pos })
+			end
+		end
+
+		table.insert(colorized, colorized_line)
+	end
+
+	return colorized
+end
+
+local alpha_c = function()
+	local alpha = require("alpha")
+
+	local mocha = require("catppuccin.palettes").get_palette("mocha")
+
+	local dashboard = require("alpha.themes.dashboard")
+
+	local header = {
+		[[ ██████████████████████████████████████████████████████████████████████████████████████████████████████                                   ]],
+		[[ ██████████████████████████████████████████████████████████████████████████████████████████████████████ ]],
+		[[ ██████████████████████████████████████████████████████████████████████████████████████████████████████ ]],
+		[[ ██████████████████████████████████████████████████████████████████████████████████████████████████████ ]],
+		[[ ██████████████████████████████████████████████████████████████████████████████████████████████████████ ]],
+		[[ ██████████████████████████████████████████████████████████████████████████████████████████████████████ ]],
+		[[ ██████████████████████████████████████████████████████████████████████████████████████████████████████ ]],
+		[[ ██████████████████████████████████████████████████████████████████████████████████████████████████████ ]],
+		[[ ██████████████████████████████████████████████████████████████████████████████████████████████████████ ]],
+		[[ ██████████████████████████████████████████████████████████████████████████████████████████████████████ ]],
+		[[ ██████████████████████████████████████████████████████████████████████████████████████████████████████ ]],
+		[[ ██████████████████████████████████████████████████████████████████████████████████████████████████████ ]],
+		[[ ██████████████████████████████████████████████████████████████████████████████████████████████████████ ]],
+		[[ ██████████████████████████████████████████████████████████████████████████████████████████████████████ ]],
+		[[ ██████████████████████████████████████████████████████████████████████████████████████████████████████ ]],
+		[[ ██████████████████████████████████████████████████████████████████████████████████████████████████████ ]],
+		[[ ██████████████████████████████████████████████████████████████████████████████████████████████████████ ]],
+		[[ ██████████████████████████████████████████████████████████████████████████████████████████████████████ ]],
+		[[ ██████████████████████████████████████████████████████████████████████████████████████████████████████ ]],
+		[[ ██████████████████████████████████████████████████████████████████████████████████████████████████████ ]],
+	}
+
+	local color_map = {
+		[[ WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBWWWWWWWWWWWWWW ]],
+		[[ RRRRWWWWWWWWWWWWWWWWRRRRRRRRRRRRRRRRWWWWWWWWWWWWWWWWBBPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPBBWWWWWWWWWWWW ]],
+		[[ RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRBBPPPPPPHHHHHHHHHHHHHHHHHHHHHHHHHHPPPPPPBBWWWWWWWWWW ]],
+		[[ RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRBBPPPPHHHHHHHHHHHHFFHHHHFFHHHHHHHHHHPPPPBBWWWWWWWWWW ]],
+		[[ OOOORRRRRRRRRRRRRRRROOOOOOOOOOOOOOOORRRRRRRRRRRRRRBBPPHHHHFFHHHHHHHHHHHHHHHHHHHHHHHHHHHHPPBBWWWWWWWWWW ]],
+		[[ OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOBBPPHHHHHHHHHHHHHHHHHHBBMMMMBBHHHHHHHHPPBBBBMMMMBBWW ]],
+		[[ OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOBBPPHHHHHHHHHHHHHHHHHHBBMMMMMMBBHHHHHHPPBBMMMMMMBBWW ]],
+		[[ YYYYOOOOOOOOOOOOOOOOYYYYYYYYYYYYYYYYOOBBBBBBBBOOOOBBPPHHHHHHHHHHHHFFHHHHBBMMMMMMBBHHHHHHPPBBMMMMMMBBWW ]],
+		[[ YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYBBMMMMBBBBOOBBPPHHHHHHHHHHHHHHHHHHBBMMMMMMMMBBBBBBBBMMMMMMMMBBWW ]],
+		[[ YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYBBBBMMMMBBBBBBPPHHHHHHFFHHHHHHHHHHBBMMMMMMMMMMMMMMMMMMMMMMMMBBWW ]],
+		[[ GGGGYYYYYYYYYYYYYYYYGGGGGGGGGGGGGGGGYYYYBBBBMMMMBBBBPPHHHHHHHHHHHHHHFFBBMMMMMMMMMMMMMMMMMMMMMMMMMMMMBB ]],
+		[[ GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGBBBBMMMMBBPPHHFFHHHHHHHHHHHHBBMMMMMMCCBBMMMMMMMMMMCCBBMMMMBB ]],
+		[[ GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGBBBBBBBBPPHHHHHHHHHHHHHHHHBBMMMMMMBBBBMMMMMMBBMMBBBBMMMMBB ]],
+		[[ UUUUGGGGGGGGGGGGGGGGUUUUUUUUUUUUUUUUGGGGGGGGGGGGBBBBPPHHHHHHHHHHFFHHHHBBMMRRRRMMMMMMMMMMMMMMMMMMRRRRBB ]],
+		[[ UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUBBPPPPHHFFHHHHHHHHHHBBMMRRRRMMBBMMMMBBMMMMBBMMRRRRBB ]],
+		[[ UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUBBPPPPPPHHHHHHHHHHHHHHBBMMMMMMBBBBBBBBBBBBBBMMMMBBWW ]],
+		[[ VVVVUUUUUUUUUUUUUUUUVVVVVVVVVVVVVVVVUUUUUUUUUUUUBBBBBBPPPPPPPPPPPPPPPPPPPPBBMMMMMMMMMMMMMMMMMMMMBBWWWW ]],
+		[[ VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVBBMMMMMMBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBWWWWWW ]],
+		[[ VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVBBMMMMBBBBWWBBMMMMBBWWWWWWWWWWBBMMMMBBWWBBMMMMBBWWWWWWWW ]],
+		[[ WWWWVVVVVVVVVVVVVVVVWWWWWWWWWWWWWWWWVVVVVVVVVVBBBBBBBBWWWWBBBBBBWWWWWWWWWWWWWWBBBBBBWWWWBBBBWWWWWWWWWW ]],
+	}
+
+	local colors = {
+		["W"] = { fg = mocha.base },
+		["C"] = { fg = mocha.text },
+		["B"] = { fg = mocha.crust },
+		["R"] = { fg = mocha.red },
+		["O"] = { fg = mocha.peach },
+		["Y"] = { fg = mocha.yellow },
+		["G"] = { fg = mocha.green },
+		["U"] = { fg = mocha.blue },
+		["P"] = { fg = mocha.yellow },
+		["H"] = { fg = mocha.pink },
+		["F"] = { fg = mocha.red },
+		["M"] = { fg = mocha.overlay0 },
+		["V"] = { fg = mocha.lavender },
+	}
+
+	dashboard.section.header.val = header
+	dashboard.section.header.opts = {
+		hl = colorize(header, color_map, colors),
+		position = "center",
+	}
+
+	dashboard.section.buttons.val = {
+		    dashboard.button( "n", "  > New file" , ":ene <BAR> startinsert <CR>"),
+            dashboard.button( "f", "  > Find file", ":Telescope find_files<CR>"),
+            dashboard.button( "w", "  > Find Word", ":Telescope live_grep <CR>"),
+            dashboard.button( "r", "  > Recent"   , ":Telescope oldfiles<CR>"),
+            dashboard.button( "q", "  > Quit", ":qa<CR>"),
+	}
+	for _, a in ipairs(dashboard.section.buttons.val) do
+		a.opts.width = 49
+		a.opts.cursor = -2
+	end
+
+	alpha.setup(dashboard.config)
+end
+
+return {
+    'goolord/alpha-nvim',
+    config = alpha_c
+}
+EOL
+
+echo "alpha.lua 파일이 수정되었습니다."
+
+
+
+
+
+
 echo "스크립트 실행 완료."
