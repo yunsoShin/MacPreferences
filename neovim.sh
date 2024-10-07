@@ -372,6 +372,202 @@ mv ~/.config/nvim/lua/plugins/telescope_temp.lua ~/.config/nvim/lua/plugins/tele
 echo "plugins/telescope.lua 파일이 덮어씌워졌습니다."
 
 
+# nvim-treesitter.lua 파일 생성 및 설정 추가
+echo "nvim-treesitter.lua 파일 생성 및 설정 추가 중..."
+cat <<EOL > ~/.config/nvim/lua/plugins/nvim-treesitter.lua
+return {
+    "nvim-treesitter/nvim-treesitter",
+    build = ":TSUpdate",
+    config = function()
+        local configs = require("nvim-treesitter.configs")
+
+        configs.setup({
+            ensure_installed = { "lua", "javascript", "html", "css" , "typescript" },
+            sync_install = false,
+            highlight = { enable = true },
+            indent = { enable = true },
+        })
+    end
+}
+EOL
+
+echo "nvim-treesitter.lua 파일이 생성되었습니다."
+
+
+
+# indent-blankline.lua 파일 생성 및 설정 추가
+echo "indent-blankline.lua 파일 생성 및 설정 추가 중..."
+cat <<EOL > ~/.config/nvim/lua/plugins/indent-blankline.lua
+return {
+    "lukas-reineke/indent-blankline.nvim",
+    main = "ibl",
+    opts = {}
+}
+EOL
+
+echo "indent-blankline.lua 파일이 생성되었습니다."
+
+
+
+
+echo "keymaps.lua 파일에 indent 관련 키매핑 추가 중..."
+
+# 임시 파일에 keymaps.lua 내용을 작성하고 indent 키매핑 추가
+cat <<EOL > ~/.config/nvim/lua/config/keymaps_temp.lua
+local mapKey = require("utils.keyMapper").mapKey
+
+-- Neotree toggle
+mapKey('<leader>e', ':Neotree toggle<cr>')
+
+-- pane navigation
+mapKey('<C-h>', '<C-w>h')  -- Left
+mapKey('<C-j>', '<C-w>j')  -- Down
+mapKey('<C-k>', '<C-w>k')  -- Up
+mapKey('<C-l>', '<C-w>l')  -- Right
+
+-- clear search hl
+mapKey('<leader>h', ':nohlsearch<CR>')
+
+-- indent
+mapKey('<', '<gv', 'v')   -- Indent left in visual mode
+mapKey('>', '>gv', 'v')   -- Indent right in visual mode
+EOL
+
+# 기존 keymaps.lua 파일 덮어씌움
+mv ~/.config/nvim/lua/config/keymaps_temp.lua ~/.config/nvim/lua/config/keymaps.lua
+
+echo "keymaps.lua 파일에 indent 관련 키매핑이 추가되었습니다."
+
+
+
+# comment.lua 파일 생성 및 설정 추가
+echo "comment.lua 파일 생성 및 설정 추가 중..."
+cat <<EOL > ~/.config/nvim/lua/plugins/comment.lua
+return {
+    'numToStr/Comment.nvim',
+    opts = {
+        -- add any options here
+    },
+    lazy = false,
+}
+EOL
+
+echo "comment.lua 파일이 생성되었습니다."
+
+# lualine.lua 파일 생성 및 설정 추가
+echo "lualine.lua 파일 생성 및 설정 추가 중..."
+cat <<EOL > ~/.config/nvim/lua/plugins/lualine.lua
+return {
+    'nvim-lualine/lualine.nvim',
+    dependencies = { 'nvim-tree/nvim-web-devicons' },
+    config = function()
+        require("lualine").setup({
+            options = {
+                theme = "gruvbox"
+            }
+        })
+    end
+}
+EOL
+
+echo "lualine.lua 파일이 생성되었습니다."
+
+
+
+# lsp.lua 파일 생성 및 설정 추가
+echo "lsp.lua 파일 생성 및 설정 추가 중..."
+cat <<EOL > ~/.config/nvim/lua/plugins/lsp.lua
+return {
+    {
+        "williamboman/mason.nvim",
+        config = function()
+            require('mason').setup()
+        end
+    },
+}
+EOL
+
+echo "lsp.lua 파일이 생성되었습니다."
+
+
+
+# lsp.lua 파일 덮어쓰기
+echo "lsp.lua 파일 덮어쓰기 중..."
+cat <<EOL > ~/.config/nvim/lua/plugins/lsp.lua
+
+local keyMapper = require('utils.keyMapper').mapKey
+
+return {
+    {
+        "williamboman/mason.nvim",
+        config = function()
+            require('mason').setup()
+        end
+    },
+    {
+        "williamboman/mason-lspconfig.nvim",
+        config = function()
+            require('mason-lspconfig').setup({
+                ensure_installed = { "lua_ls", "ts_ls"  }
+            })
+        end
+    },
+    {
+        "neovim/nvim-lspconfig",
+        config = function()
+            local lspconfig = require('lspconfig')
+            lspconfig.lua_ls.setup({})
+            lspconfig.ts_ls.setup({})
+
+            -- LSP key mappings
+            keyMapper('K', vim.lsp.buf.hover)           -- hover documentation
+            keyMapper('gd', vim.lsp.buf.definition)      -- go to definition
+            keyMapper('<leader>ca', vim.lsp.buf.code_action) -- code action
+        end
+    },
+}
+EOL
+
+
+echo "lsp.lua 파일이 덮어씌워졌습니다."
+
+
+
+# telescope.lua 파일 덮어쓰기
+echo "telescope.lua 파일 덮어쓰기 중..."
+cat <<EOL > ~/.config/nvim/lua/plugins/telescope_temp.lua
+local mapKey = require("utils.keyMapper").mapKey
+
+return {
+    'nvim-telescope/telescope.nvim', tag = '0.1.5',
+    dependencies = { 'nvim-lua/plenary.nvim', 'nvim-telescope/telescope-ui-select.nvim' },  -- ui-select 확장을 추가
+    config = function()
+        local builtin = require("telescope.builtin")
+        
+        -- 키 매핑 설정
+        mapKey('<leader>ff', builtin.find_files)
+        mapKey('<leader>fg', builtin.live_grep)
+        mapKey('<leader>fb', builtin.buffers)
+        mapKey('<leader>fh', builtin.help_tags)
+
+        -- 첫 번째 이미지의 설정 추가
+        require('telescope').setup({
+            extensions = {
+                ["ui-select"] = {
+                    require("telescope.themes").get_dropdown {}
+                }
+            }
+        })
+        require("telescope").load_extension("ui-select")
+    end
+}
+EOL
+
+# 기존 telescope.lua 파일 덮어씌움
+mv ~/.config/nvim/lua/plugins/telescope_temp.lua ~/.config/nvim/lua/plugins/telescope.lua
+
+echo "plugins/telescope.lua 파일이 덮어씌워졌습니다."
+
 
 
 
