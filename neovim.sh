@@ -316,6 +316,10 @@ echo "init.lua 파일에서 lazy.nvim 설정 전에 require() 구문 추가 중.
 
 # 임시 파일에 init.lua를 작성하되, lazy.nvim 설정 전 require 구문 삽입
 cat <<EOL > ~/.config/nvim/lua/config/init_temp.lua
+
+
+vim.opt.clipboard:append("unnamedplus")
+
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not (vim.uv or vim.loop).fs_stat(lazypath) then
   vim.fn.system({
