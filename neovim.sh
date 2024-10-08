@@ -895,6 +895,76 @@ echo "alpha.lua 파일이 수정되었습니다."
 
 
 
+#!/bin/bash
+
+# 위에 이미 작성된 플러그인 설정 뒤에 추가할 avante.nvim 설정 스크립트
+
+echo "plugins/avante.lua 파일 생성 및 설정 추가 중..."
+cat <<EOL > ~/.config/nvim/lua/plugins/avante.lua
+return {
+    "yetone/avante.nvim",
+    event = "VeryLazy",
+    lazy = false,
+    version = false,
+    opts = {
+        provider = "claude", -- or "openai", depending on your preference
+        auto_suggestions_provider = "claude", -- "copilot" if using Copilot for suggestions
+        claude = {
+            endpoint = "https://api.anthropic.com",
+            model = "claude-3-5-sonnet-20240620",
+            temperature = 0,
+            max_tokens = 4096,
+        },
+        behaviour = {
+            auto_suggestions = false,
+            auto_set_highlight_group = true,
+            auto_set_keymaps = true,
+            auto_apply_diff_after_generation = false,
+            support_paste_from_clipboard = false,
+        },
+        mappings = {
+            suggestion = {
+                accept = "<M-l>",
+                next = "<M-]>",
+                prev = "<M-[>",
+                dismiss = "<C-]>",
+            },
+        },
+        windows = {
+            position = "right",
+            wrap = true,
+            width = 30,
+            sidebar_header = {
+                align = "center",
+                rounded = true,
+            },
+        },
+    },
+    dependencies = {
+        "nvim-treesitter/nvim-treesitter",
+        "stevearc/dressing.nvim",
+        "nvim-lua/plenary.nvim",
+        "MunifTanjim/nui.nvim",
+        "nvim-tree/nvim-web-devicons", -- optional
+        "zbirenbaum/copilot.lua", -- optional
+        "HakonHarnes/img-clip.nvim", -- optional
+        {
+            "MeanderingProgrammer/render-markdown.nvim",
+            opts = {
+                file_types = { "markdown", "Avante" },
+            },
+            ft = { "markdown", "Avante" },
+        },
+    },
+}
+EOL
+
+echo "avante.nvim 설정이 추가되었습니다."
+
+
+
+
+
 
 
 
