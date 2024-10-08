@@ -21,14 +21,14 @@ then
             # 최신 Ubuntu 버전
             sudo add-apt-repository ppa:neovim-ppa/stable
             sudo apt-get update
-            sudo apt-get install -y neovim
+            sudo apt-get install -y neovim git ripgrep build-essential
         else
             # 이전 Ubuntu 버전
             sudo apt-get update
             sudo apt-get install -y python-dev python-pip python3-dev
             sudo apt-get install -y python3-setuptools
             sudo easy_install3 pip
-            sudo apt-get install -y neovim
+            sudo apt-get install -y neovim git ripgrep build-essential
         fi
     fi
 else
@@ -39,12 +39,12 @@ fi
 # Neovim 버전 확인 및 최신 버전 설치
 if command -v nvim &> /dev/null
 then
-    NVIM_VERSION=$(nvim --version | head -n 1 | awk '{print $2}')
+    NVIM_VERSION=$(nvim --version | head -n 1 | awk '{print $2}' | sed 's/^v//')  # 'v' 제거
     REQUIRED_VERSION="0.10.0"
 
-    # Neovim 버전이 REQUIRED_VERSION보다 낮을 때만 업데이트
-    if [[ $(echo -e "$REQUIRED_VERSION\n$NVIM_VERSION" | sort -V | head -n 1) == "$NVIM_VERSION" && "$NVIM_VERSION" != "$REQUIRED_VERSION" ]]; then
-        echo "Neovim 버전이 $NVIM_VERSION이므로 업데이트가 필요합니다..."
+    # dpkg --compare-versions 명령어로 정확한 버전 비교 수행
+    if dpkg --compare-versions "$NVIM_VERSION" lt "$REQUIRED_VERSION"; then
+        echo "Neovim 버전이 $NVIM_VERSION 이므로 업데이트가 필요합니다..."
         if [[ "$OS" == "Linux" ]]; then
             brew update
             brew upgrade neovim
@@ -53,14 +53,21 @@ then
             brew upgrade neovim
         fi
     else
-        echo "Neovim이 최신 버전입니다."
+        echo "Neovim이 최신 버전($NVIM_VERSION)입니다."
     fi
 else
     echo "Neovim이 설치되어 있지 않습니다. 설치를 진행합니다..."
     if [[ "$OS" == "Linux" && "$ARCH" != "arm64" ]]; then
         sudo apt update
-        sudo apt install -y neovim
+        sudo apt install neovim
+        sudo apt install python3-neovim
+        sudo apt-get install software-properties-common
+        sudo add-apt-repository ppa:neovim-ppa/unstable
+        sudo apt-get update
+        sudo apt-get install neovim
+
     elif [[ "$OS" == "Darwin" ]]; then
+        brew update
         brew install neovim
     fi
 fi
@@ -97,6 +104,26 @@ else
     echo "ripgrep이 이미 설치되어 있습니다."
     rg --version
 fi
+
+
+
+# make 설치 여부 확인
+if ! command -v make &> /dev/null
+then
+    echo "make가 설치되어 있지 않습니다. 설치를 진행합니다..."
+    if [[ "$OS" == "Linux" ]]; then
+        sudo apt update
+        sudo apt install -y build-essential
+    elif [[ "$OS" == "Darwin" ]]; then
+        xcode-select --install
+    fi
+else
+    echo "make가 이미 설치되어 있습니다."
+    make --version
+fi
+
+
+
 
 echo "사용자 홈 디렉토리로 이동..."
 cd ~ || { echo "홈 디렉토리로 이동 실패"; exit 1; }
@@ -316,6 +343,10 @@ echo "init.lua 파일에서 lazy.nvim 설정 전에 require() 구문 추가 중.
 
 # 임시 파일에 init.lua를 작성하되, lazy.nvim 설정 전 require 구문 삽입
 cat <<EOL > ~/.config/nvim/lua/config/init_temp.lua
+
+
+vim.opt.clipboard:append("unnamedplus")
+
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not (vim.uv or vim.loop).fs_stat(lazypath) then
   vim.fn.system({
@@ -711,21 +742,36 @@ echo "plugins/telescope.lua 파일이 덮어씌워졌습니다."
 
 
 
-
-
-# catppuccin.lua 파일 생성
 echo "catppuccin.lua 파일 생성 중..."
 cat <<EOL > ~/.config/nvim/lua/plugins/catppuccin.lua
 return {
     "catppuccin/nvim",
     name = "catppuccin",
     config = function()
+        require("catppuccin").setup({
+            transparent_background = true,  -- 투명 배경 활성화
+            term_colors = true,             -- 터미널 색상 활성화
+        })
         vim.cmd.colorscheme "catppuccin"
     end
 }
 EOL
 
-echo "catppuccin.lua 파일이 생성되었습니다."
+# echo "catppuccin.lua 파일이 생성되었습니다."
+
+# # catppuccin.lua 파일 생성
+# echo "catppuccin.lua 파일 생성 중..."
+# cat <<EOL > ~/.config/nvim/lua/plugins/catppuccin.lua
+# return {
+#     "catppuccin/nvim",
+#     name = "catppuccin",
+#     config = function()
+#         vim.cmd.colorscheme "catppuccin"
+#     end
+# }
+# EOL
+
+# echo "catppuccin.lua 파일이 생성되었습니다."
 
 
 # lualine.lua 파일 덮어쓰기
@@ -892,6 +938,210 @@ echo "alpha.lua 파일이 수정되었습니다."
 
 
 
+# gruvbox.lua 파일 생성 및 설정 추가
+echo "plugins/gruvbox.lua 파일 생성 및 설정 추가..."
+cat <<EOL > ~/.config/nvim/lua/plugins/gruvbox.lua
+return {
+    "ellisonleao/gruvbox.nvim",
+    priority = 1000,
+    lazy = false,
+    config = function()
+        vim.cmd([[colorscheme gruvbox]])
+    end
+}
+EOL
 
+echo "plugins/gruvbox.lua 파일이 생성되었습니다."
+
+
+
+
+
+# dressing.lua 파일 생성 및 설정 추가
+echo "plugins/dressing.lua 파일 생성 및 설정 추가..."
+cat <<EOL > ~/.config/nvim/lua/plugins/dressing.lua
+return {
+    "stevearc/dressing.nvim",
+    opts = {},
+}
+EOL
+
+echo "plugins/dressing.lua 파일이 생성되었습니다."
+
+
+
+# plenary.lua 파일 생성 및 설정 추가
+echo "plugins/plenary.lua 파일 생성 및 설정 추가..."
+cat <<EOL > ~/.config/nvim/lua/plugins/plenary.lua
+return {
+    "nvim-lua/plenary.nvim",
+    lazy = true,
+}
+EOL
+
+echo "plugins/plenary.lua 파일이 생성되었습니다."
+
+
+
+
+# nui.lua 파일 생성 및 설정 추가
+echo "plugins/nui.lua 파일 생성 및 설정 추가..."
+cat <<EOL > ~/.config/nvim/lua/plugins/nui.lua
+return {
+    "MunifTanjim/nui.nvim",
+    lazy = true,
+}
+EOL
+
+echo "plugins/nui.lua 파일이 생성되었습니다."
+
+
+# web-devicons.lua 파일 생성 및 설정 추가
+echo "plugins/web-devicons.lua 파일 생성 및 설정 추가..."
+cat <<EOL > ~/.config/nvim/lua/plugins/web-devicons.lua
+return {
+    "nvim-tree/nvim-web-devicons",
+    lazy = true,
+}
+EOL
+
+echo "plugins/web-devicons.lua 파일이 생성되었습니다."
+
+
+
+# render-markdown.lua 파일 생성 및 설정 추가
+echo "plugins/render-markdown.lua 파일 생성 및 설정 추가..."
+cat <<EOL > ~/.config/nvim/lua/plugins/render-markdown.lua
+return {
+    "MeanderingProgrammer/render-markdown.nvim",
+    opts = {
+        file_types = { "markdown", "Avante" },
+    },
+    ft = { "markdown", "Avante" },
+}
+EOL
+
+echo "plugins/render-markdown.lua 파일이 생성되었습니다."
+
+
+
+# img-clip.lua 파일 생성 및 설정 추가 (선택사항)
+echo "plugins/img-clip.lua 파일 생성 및 설정 추가..."
+cat <<EOL > ~/.config/nvim/lua/plugins/img-clip.lua
+return {
+    "HakonHarnes/img-clip.nvim",
+    event = "VeryLazy",
+    opts = {
+        default = {
+            embed_image_as_base64 = false,
+            prompt_for_file_name = false,
+            drag_and_drop = {
+                insert_mode = true,
+            },
+            use_absolute_path = true,
+        },
+    },
+}
+EOL
+
+echo "plugins/img-clip.lua 파일이 생성되었습니다."
+
+
+
+
+
+#!/bin/bash
+
+# 위에 이미 작성된 플러그인 설정 뒤에 추가할 avante.nvim 설정 스크립트
+
+# avante.lua 파일 생성 및 설정 추가
+echo "plugins/avante.lua 파일 생성 및 설정 추가 중..."
+cat <<EOL > ~/.config/nvim/lua/plugins/avante.lua
+return {
+    "yetone/avante.nvim",
+    build = "make",  -- 'make' 명령어 추가
+    event = "VeryLazy",
+    lazy = false,
+    version = false,
+    opts = {
+        provider = "openai",
+        auto_suggestions_provider = "openai", 
+        openai = {
+            model = "gpt-4o",
+            temperature = 0.3,
+        },
+        behaviour = {
+            auto_suggestions = false,
+            auto_set_highlight_group = true,
+            auto_set_keymaps = true,
+            auto_apply_diff_after_generation = false,
+            support_paste_from_clipboard = false,
+        },
+        mappings = {
+            suggestion = {
+                accept = "<M-l>",
+                next = "<M-]>",
+                prev = "<M-[>",
+                dismiss = "<C-]>",
+            },
+        },
+        windows = {
+            position = "right",
+            wrap = true,
+            width = 30,
+            sidebar_header = {
+                align = "center",
+                rounded = true,
+            },
+        },
+    },
+    dependencies = {
+        "nvim-treesitter/nvim-treesitter",
+        "stevearc/dressing.nvim",
+        "nvim-lua/plenary.nvim",
+        "MunifTanjim/nui.nvim",
+        "nvim-tree/nvim-web-devicons", -- optional
+        {
+            "MeanderingProgrammer/render-markdown.nvim",
+            opts = {
+                file_types = { "markdown", "Avante" },
+            },
+            ft = { "markdown", "Avante" },
+        },
+    },
+}
+EOL
+echo "avante.nvim 설정이 추가되었습니다."
+
+echo "avante.nvim 플러그인 빌드 중..."
+
+# avante.nvim 빌드
+AVANTE_DIR="$HOME/.local/share/nvim/lazy/avante.nvim"
+
+if [ -d "$AVANTE_DIR" ]; then
+    cd "$AVANTE_DIR" || { echo "avante.nvim 디렉토리로 이동 실패"; exit 1; }
+
+    # Makefile이 있을 경우 make 명령어로 빌드
+    if [ -f "Makefile" ]; then
+        make || { echo "avante.nvim 빌드 실패"; exit 1; }
+    else
+        echo "Makefile이 없습니다. 빌드를 수행할 수 없습니다."
+        exit 1
+    fi
+
+    # 빌드 결과 확인
+    if [ -d "./build" ] && [ -f "./build/avante_repo_map.dylib" ] && [ -f "./build/avante_templates.dylib" ] && [ -f "./build/avante_tokenizers.dylib" ]; then
+        echo "avante.nvim 빌드 성공"
+    else
+        echo "avante.nvim 빌드 결과 확인 실패: 필요한 파일이 없습니다."
+        exit 1
+    fi
+
+    # 원래 디렉토리로 이동
+    cd - || exit
+else
+    echo "avante.nvim 디렉토리를 찾을 수 없습니다."
+    exit 1
+fi
 
 echo "스크립트 실행 완료."
