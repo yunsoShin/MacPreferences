@@ -1050,11 +1050,12 @@ echo "plugins/img-clip.lua 파일이 생성되었습니다."
 
 
 
+
 #!/bin/bash
 
-# 위에 이미 작성된 플러그인 설정 뒤에 추가할 avante.nvim 설정 스크립트
+# OpenAI API Key를 입력받음
 
-# avante.lua 파일 생성 및 설정 추가
+# 플러그인 설정을 생성하는 스크립트 작성 (운영체제의 환경 변수를 읽음)
 echo "plugins/avante.lua 파일 생성 및 설정 추가 중..."
 cat <<EOL > ~/.config/nvim/lua/plugins/avante.lua
 return {
@@ -1069,11 +1070,6 @@ return {
         openai = {
             model = "gpt-4o",
             temperature = 0.3,
-            headers = {
-                ["Authorization"] = "Bearer " .. vim.fn.getenv("OPENAI_API_KEY"),
-                ["Accept"] = "application/json",
-                ["Content-Type"] = "application/json",
-            }
         },
         behaviour = {
             auto_suggestions = false,
@@ -1116,7 +1112,12 @@ return {
     },
 }
 EOL
-echo "avante.nvim 설정이 추가되었습니다."
+
+# Lua 파일을 출력하여 확인
+cat ~/.config/nvim/lua/plugins/avante.lua
+
+echo "API Key가 설정된 avante.lua 파일이 생성되었습니다."
+
 
 echo "avante.nvim 플러그인 빌드 중..."
 
