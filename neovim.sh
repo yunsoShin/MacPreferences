@@ -1069,6 +1069,11 @@ return {
         openai = {
             model = "gpt-4o",
             temperature = 0.3,
+            headers = {
+                ["Authorization"] = "Bearer " .. vim.fn.getenv("OPENAI_API_KEY"),
+                ["Accept"] = "application/json",
+                ["Content-Type"] = "application/json",
+            }
         },
         behaviour = {
             auto_suggestions = false,
