@@ -196,7 +196,7 @@ EOL
 # # init.lua 파일의 local plugins 객체 갱신
 # sed -i 's/local plugins = {}/local plugins = "plugins"/' ~/.config/nvim/lua/config/init.lua
 
-echo "plugins/NeoTree.lua 파일 생성 및 설정 추가..."
+echo "neo-tree.lua 파일 덮어쓰기 중..."
 cat <<EOL > ~/.config/nvim/lua/plugins/neo-tree.lua
 return {
     "nvim-neo-tree/neo-tree.nvim",
@@ -205,8 +205,19 @@ return {
       "nvim-lua/plenary.nvim",
       "nvim-tree/nvim-web-devicons", -- not strictly required, but recommended
       "MunifTanjim/nui.nvim",
-    }
-} 
+    },
+    config = function()
+        require("neo-tree").setup({
+            filesystem = {
+                filtered_items = {
+                    hide_dotfiles = false,  -- 숨김 파일(.env 등) 표시
+                    hide_gitignored = false,
+                    show_hidden = true,     -- 숨김 파일을 탐색할 수 있도록 설정
+                },
+            },
+        })
+    end
+}
 EOL
 
 
@@ -217,6 +228,123 @@ return {
     dependencies = { 'nvim-lua/plenary.nvim' }
 }
 EOL
+
+
+
+
+
+
+# gruvbox.lua 파일 생성 및 설정 추가
+echo "plugins/gruvbox.lua 파일 생성 및 설정 추가..."
+cat <<EOL > ~/.config/nvim/lua/plugins/gruvbox.lua
+return {
+    "ellisonleao/gruvbox.nvim",
+    priority = 1000,
+    lazy = false,
+    config = function()
+        vim.cmd([[colorscheme gruvbox]])
+    end
+}
+EOL
+
+echo "plugins/gruvbox.lua 파일이 생성되었습니다."
+
+
+
+
+
+# dressing.lua 파일 생성 및 설정 추가
+echo "plugins/dressing.lua 파일 생성 및 설정 추가..."
+cat <<EOL > ~/.config/nvim/lua/plugins/dressing.lua
+return {
+    "stevearc/dressing.nvim",
+    opts = {},
+}
+EOL
+
+echo "plugins/dressing.lua 파일이 생성되었습니다."
+
+
+
+# plenary.lua 파일 생성 및 설정 추가
+echo "plugins/plenary.lua 파일 생성 및 설정 추가..."
+cat <<EOL > ~/.config/nvim/lua/plugins/plenary.lua
+return {
+    "nvim-lua/plenary.nvim",
+    lazy = true,
+}
+EOL
+
+echo "plugins/plenary.lua 파일이 생성되었습니다."
+
+
+
+
+# nui.lua 파일 생성 및 설정 추가
+echo "plugins/nui.lua 파일 생성 및 설정 추가..."
+cat <<EOL > ~/.config/nvim/lua/plugins/nui.lua
+return {
+    "MunifTanjim/nui.nvim",
+    lazy = true,
+}
+EOL
+
+echo "plugins/nui.lua 파일이 생성되었습니다."
+
+
+# web-devicons.lua 파일 생성 및 설정 추가
+echo "plugins/web-devicons.lua 파일 생성 및 설정 추가..."
+cat <<EOL > ~/.config/nvim/lua/plugins/web-devicons.lua
+return {
+    "nvim-tree/nvim-web-devicons",
+    lazy = true,
+}
+EOL
+
+echo "plugins/web-devicons.lua 파일이 생성되었습니다."
+
+
+
+# render-markdown.lua 파일 생성 및 설정 추가
+echo "plugins/render-markdown.lua 파일 생성 및 설정 추가..."
+cat <<EOL > ~/.config/nvim/lua/plugins/render-markdown.lua
+return {
+    "MeanderingProgrammer/render-markdown.nvim",
+    opts = {
+        file_types = { "markdown", "Avante" },
+    },
+    ft = { "markdown", "Avante" },
+}
+EOL
+
+echo "plugins/render-markdown.lua 파일이 생성되었습니다."
+
+
+
+# img-clip.lua 파일 생성 및 설정 추가 (선택사항)
+echo "plugins/img-clip.lua 파일 생성 및 설정 추가..."
+cat <<EOL > ~/.config/nvim/lua/plugins/img-clip.lua
+return {
+    "HakonHarnes/img-clip.nvim",
+    event = "VeryLazy",
+    opts = {
+        default = {
+            embed_image_as_base64 = false,
+            prompt_for_file_name = false,
+            drag_and_drop = {
+                insert_mode = true,
+            },
+            use_absolute_path = true,
+        },
+    },
+}
+EOL
+
+echo "plugins/img-clip.lua 파일이 생성되었습니다."
+
+
+
+
 
 
 # 운영체제에 따라 다른 sed 명령어 실행
@@ -332,6 +460,10 @@ opt.encoding = "UTF-8"    -- 파일 인코딩을 UTF-8로 설정
 opt.cmdheight = 1         -- 명령어 입력창의 높이를 1줄로 설정
 opt.scrolloff = 10        -- 화면의 상하단에서 10줄 이상 남도록 스크롤
 opt.mouse:append("a")     -- 마우스 모든 모드에서 활성화
+
+opt.hidden = true        -- 숨김 파일도 nvim에서 열 수 있도록 허용
+opt.wildignore:append(".*")  -- 숨김 파일을 포함해 파일 탐색 시 표시
+
 EOL
 
 echo "options.lua 파일이 작성되었습니다."
@@ -522,6 +654,92 @@ echo "lsp.lua 파일이 생성되었습니다."
 
 
 
+echo "cmp.lua 파일 생성 중..."
+cat <<EOL > ~/.config/nvim/lua/plugins/cmp.lua
+return {
+  -- 자동 완성 플러그인
+  'hrsh7th/nvim-cmp',
+  dependencies = {
+    'hrsh7th/cmp-nvim-lsp',       -- LSP 기반 완성
+    'hrsh7th/cmp-buffer',         -- 버퍼 기반 완성
+    'hrsh7th/cmp-path',           -- 파일 경로 완성
+    'hrsh7th/cmp-cmdline',        -- 명령어 라인 완성
+    'saadparwaiz1/cmp_luasnip',   -- 스니펫 완성
+    'L3MON4D3/LuaSnip',           -- 스니펫 엔진
+    'rafamadriz/friendly-snippets'-- 기본 스니펫
+  },
+  config = function()
+    local cmp = require'cmp'
+    local luasnip = require'luasnip'
+
+    -- friendly-snippets 로드
+    require("luasnip.loaders.from_vscode").lazy_load()
+
+    cmp.setup({
+      snippet = {
+        expand = function(args)
+          luasnip.lsp_expand(args.body)
+        end,
+      },
+      mapping = cmp.mapping.preset.insert({
+        ['<C-b>'] = cmp.mapping.scroll_docs(-4),
+        ['<C-f>'] = cmp.mapping.scroll_docs(4),
+        ['<C-Space>'] = cmp.mapping.complete(),
+        ['<CR>'] = cmp.mapping.confirm({ select = true }),
+        ['<Tab>'] = cmp.mapping(function(fallback)
+          if cmp.visible() then
+            cmp.select_next_item()
+          elseif luasnip.expand_or_jumpable() then
+            luasnip.expand_or_jump()
+          else
+            fallback()
+          end
+        end, { 'i', 's' }),
+        ['<S-Tab>'] = cmp.mapping(function(fallback)
+          if cmp.visible() then
+            cmp.select_prev_item()
+          elseif luasnip.jumpable(-1) then
+            luasnip.jump(-1)
+          else
+            fallback()
+          end
+        end, { 'i', 's' }),
+      }),
+      sources = cmp.config.sources({
+        { name = 'nvim_lsp' },
+        { name = 'luasnip' },
+      }, {
+        { name = 'buffer' },
+        { name = 'path' },
+      })
+    })
+
+    -- '/' 입력 시 버퍼 소스 사용
+    cmp.setup.cmdline('/', {
+      mapping = cmp.mapping.preset.cmdline(),
+      sources = {
+        { name = 'buffer' }
+      }
+    })
+
+    -- ':' 입력 시 cmdline 및 path 소스 사용
+    cmp.setup.cmdline(':', {
+      mapping = cmp.mapping.preset.cmdline(),
+      sources = cmp.config.sources({
+        { name = 'path' }
+      }, {
+        { name = 'cmdline' }
+      })
+    })
+
+  end,
+}
+EOL
+
+echo "cmp.lua 파일이 생성되었습니다."
+
+
+
 # lsp.lua 파일 덮어쓰기
 echo "lsp.lua 파일 덮어쓰기 중..."
 cat <<EOL > ~/.config/nvim/lua/plugins/lsp.lua
@@ -539,7 +757,7 @@ return {
         "williamboman/mason-lspconfig.nvim",
         config = function()
             require('mason-lspconfig').setup({
-                ensure_installed = { "lua_ls", "ts_ls"  }
+                ensure_installed = { "lua_ls", "ts_ls" }
             })
         end
     },
@@ -547,8 +765,17 @@ return {
         "neovim/nvim-lspconfig",
         config = function()
             local lspconfig = require('lspconfig')
-            lspconfig.lua_ls.setup({})
-            lspconfig.ts_ls.setup({})
+
+            -- 자동 완성(cmp-nvim-lsp)과 LSP 연동
+            local capabilities = require('cmp_nvim_lsp').default_capabilities()
+
+            -- LSP 서버 설정에 capabilities 추가
+            lspconfig.lua_ls.setup({
+                capabilities = capabilities,
+            })
+            lspconfig.ts_ls.setup({
+                capabilities = capabilities,
+            })
 
             -- LSP key mappings
             keyMapper('K', vim.lsp.buf.hover)           -- hover documentation
@@ -557,13 +784,48 @@ return {
         end
     },
 }
+
 EOL
 
-
-echo "lsp.lua 파일이 덮어씌워졌습니다."
-
+echo "lsp.lua 파일이 업데이트되었습니다."
 
 
+
+
+# # telescope.lua 파일 덮어쓰기
+# echo "telescope.lua 파일 덮어쓰기 중..."
+# cat <<EOL > ~/.config/nvim/lua/plugins/telescope_temp.lua
+# local mapKey = require("utils.keyMapper").mapKey
+
+# return {
+#     'nvim-telescope/telescope.nvim', tag = '0.1.5',
+#     dependencies = { 'nvim-lua/plenary.nvim', 'nvim-telescope/telescope-ui-select.nvim' },  -- ui-select 확장을 추가
+#     config = function()
+#         local builtin = require("telescope.builtin")
+        
+#         -- 키 매핑 설정
+#         mapKey('<leader>ff', builtin.find_files)
+#         mapKey('<leader>fg', builtin.live_grep)
+#         mapKey('<leader>fb', builtin.buffers)
+#         mapKey('<leader>fh', builtin.help_tags)
+
+#         -- 첫 번째 이미지의 설정 추가
+#         require('telescope').setup({
+#             extensions = {
+#                 ["ui-select"] = {
+#                     require("telescope.themes").get_dropdown {}
+#                 }
+#             }
+#         })
+#         require("telescope").load_extension("ui-select")
+#     end
+# }
+# EOL
+
+# # 기존 telescope.lua 파일 덮어씌움
+# mv ~/.config/nvim/lua/plugins/telescope_temp.lua ~/.config/nvim/lua/plugins/telescope.lua
+
+# echo "plugins/telescope.lua 파일이 덮어씌워졌습니다."
 # telescope.lua 파일 덮어쓰기
 echo "telescope.lua 파일 덮어쓰기 중..."
 cat <<EOL > ~/.config/nvim/lua/plugins/telescope_temp.lua
@@ -574,14 +836,36 @@ return {
     dependencies = { 'nvim-lua/plenary.nvim', 'nvim-telescope/telescope-ui-select.nvim' },  -- ui-select 확장을 추가
     config = function()
         local builtin = require("telescope.builtin")
-        
+
         -- 키 매핑 설정
-        mapKey('<leader>ff', builtin.find_files)
+        mapKey('<leader>ff', function()
+          builtin.find_files({
+            hidden = true  -- 숨김 파일 표시
+          })
+        end)
         mapKey('<leader>fg', builtin.live_grep)
         mapKey('<leader>fb', builtin.buffers)
         mapKey('<leader>fh', builtin.help_tags)
 
-        -- 첫 번째 이미지의 설정 추가
+        -- fd 명령어로 디렉토리 검색
+        mapKey('<leader>fd', function()
+          builtin.find_files({
+            prompt_title = "Find Folders",
+            find_command = {'fd', '--type', 'd', '--hidden'}  -- 숨김 파일 표시
+          })
+        end)
+
+        -- 현재 열려있는 파일의 루트 디렉토리 내에서 파일 검색
+        mapKey('<leader>fp', function()
+          local current_file_dir = vim.fn.expand('%:p:h')  -- 현재 파일의 루트 디렉토리
+          builtin.find_files({
+            prompt_title = "Find Files in Current Directory",
+            search_dirs = { current_file_dir },
+            hidden = true  -- 숨김 파일 표시
+          })
+        end)
+
+        -- Telescope 설정
         require('telescope').setup({
             extensions = {
                 ["ui-select"] = {
@@ -593,10 +877,6 @@ return {
     end
 }
 EOL
-
-# 기존 telescope.lua 파일 덮어씌움
-mv ~/.config/nvim/lua/plugins/telescope_temp.lua ~/.config/nvim/lua/plugins/telescope.lua
-
 echo "plugins/telescope.lua 파일이 덮어씌워졌습니다."
 
 
@@ -742,36 +1022,36 @@ echo "plugins/telescope.lua 파일이 덮어씌워졌습니다."
 
 
 
-echo "catppuccin.lua 파일 생성 중..."
-cat <<EOL > ~/.config/nvim/lua/plugins/catppuccin.lua
-return {
-    "catppuccin/nvim",
-    name = "catppuccin",
-    config = function()
-        require("catppuccin").setup({
-            transparent_background = true,  -- 투명 배경 활성화
-            term_colors = true,             -- 터미널 색상 활성화
-        })
-        vim.cmd.colorscheme "catppuccin"
-    end
-}
-EOL
-
-# echo "catppuccin.lua 파일이 생성되었습니다."
-
-# # catppuccin.lua 파일 생성
 # echo "catppuccin.lua 파일 생성 중..."
 # cat <<EOL > ~/.config/nvim/lua/plugins/catppuccin.lua
 # return {
 #     "catppuccin/nvim",
 #     name = "catppuccin",
 #     config = function()
+#         require("catppuccin").setup({
+#             transparent_background = true,  -- 투명 배경 활성화
+#             term_colors = true,             -- 터미널 색상 활성화
+#         })
 #         vim.cmd.colorscheme "catppuccin"
 #     end
 # }
 # EOL
 
 # echo "catppuccin.lua 파일이 생성되었습니다."
+
+# catppuccin.lua 파일 생성
+echo "catppuccin.lua 파일 생성 중..."
+cat <<EOL > ~/.config/nvim/lua/plugins/catppuccin.lua
+return {
+    "catppuccin/nvim",
+    name = "catppuccin",
+    config = function()
+        vim.cmd.colorscheme "catppuccin"
+    end
+}
+EOL
+
+echo "catppuccin.lua 파일이 생성되었습니다."
 
 
 # lualine.lua 파일 덮어쓰기
@@ -938,113 +1218,6 @@ echo "alpha.lua 파일이 수정되었습니다."
 
 
 
-# gruvbox.lua 파일 생성 및 설정 추가
-echo "plugins/gruvbox.lua 파일 생성 및 설정 추가..."
-cat <<EOL > ~/.config/nvim/lua/plugins/gruvbox.lua
-return {
-    "ellisonleao/gruvbox.nvim",
-    priority = 1000,
-    lazy = false,
-    config = function()
-        vim.cmd([[colorscheme gruvbox]])
-    end
-}
-EOL
-
-echo "plugins/gruvbox.lua 파일이 생성되었습니다."
-
-
-
-
-
-# dressing.lua 파일 생성 및 설정 추가
-echo "plugins/dressing.lua 파일 생성 및 설정 추가..."
-cat <<EOL > ~/.config/nvim/lua/plugins/dressing.lua
-return {
-    "stevearc/dressing.nvim",
-    opts = {},
-}
-EOL
-
-echo "plugins/dressing.lua 파일이 생성되었습니다."
-
-
-
-# plenary.lua 파일 생성 및 설정 추가
-echo "plugins/plenary.lua 파일 생성 및 설정 추가..."
-cat <<EOL > ~/.config/nvim/lua/plugins/plenary.lua
-return {
-    "nvim-lua/plenary.nvim",
-    lazy = true,
-}
-EOL
-
-echo "plugins/plenary.lua 파일이 생성되었습니다."
-
-
-
-
-# nui.lua 파일 생성 및 설정 추가
-echo "plugins/nui.lua 파일 생성 및 설정 추가..."
-cat <<EOL > ~/.config/nvim/lua/plugins/nui.lua
-return {
-    "MunifTanjim/nui.nvim",
-    lazy = true,
-}
-EOL
-
-echo "plugins/nui.lua 파일이 생성되었습니다."
-
-
-# web-devicons.lua 파일 생성 및 설정 추가
-echo "plugins/web-devicons.lua 파일 생성 및 설정 추가..."
-cat <<EOL > ~/.config/nvim/lua/plugins/web-devicons.lua
-return {
-    "nvim-tree/nvim-web-devicons",
-    lazy = true,
-}
-EOL
-
-echo "plugins/web-devicons.lua 파일이 생성되었습니다."
-
-
-
-# render-markdown.lua 파일 생성 및 설정 추가
-echo "plugins/render-markdown.lua 파일 생성 및 설정 추가..."
-cat <<EOL > ~/.config/nvim/lua/plugins/render-markdown.lua
-return {
-    "MeanderingProgrammer/render-markdown.nvim",
-    opts = {
-        file_types = { "markdown", "Avante" },
-    },
-    ft = { "markdown", "Avante" },
-}
-EOL
-
-echo "plugins/render-markdown.lua 파일이 생성되었습니다."
-
-
-
-# img-clip.lua 파일 생성 및 설정 추가 (선택사항)
-echo "plugins/img-clip.lua 파일 생성 및 설정 추가..."
-cat <<EOL > ~/.config/nvim/lua/plugins/img-clip.lua
-return {
-    "HakonHarnes/img-clip.nvim",
-    event = "VeryLazy",
-    opts = {
-        default = {
-            embed_image_as_base64 = false,
-            prompt_for_file_name = false,
-            drag_and_drop = {
-                insert_mode = true,
-            },
-            use_absolute_path = true,
-        },
-    },
-}
-EOL
-
-echo "plugins/img-clip.lua 파일이 생성되었습니다."
 
 
 
